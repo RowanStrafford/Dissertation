@@ -7,8 +7,8 @@ System::System()
 	m_cam = new Camera(glm::vec3(0, 0, 3));
 	m_shader = new Shader("vertShad.vert", "fragShad.frag");
 	
-	m_cube1 = new Cube(glm::vec3(0, 0, 0));
-	m_cube1->SetTexture("Me.jpg");
+	//m_cube1 = new Cube(glm::vec3(0, 0, 0));
+	//m_cube1->SetTexture("Me.jpg");
 
 	// Initialisation of GLFW
 	glfwInit();

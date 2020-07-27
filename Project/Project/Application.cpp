@@ -5,6 +5,8 @@
 #include "Shader.h"
 #include "stb_image.h"
 #include "System.h"
+#include "GA.h"
+#include "MyCylinder.h"
 
 // GLM - MATHS/VECTORS/MATRICES
 #include <glm/glm.hpp>
@@ -20,24 +22,30 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void ProcessInput(GLFWwindow* window);
 
 void Setup(GLFWwindow* window);
+void DrawCubes(std::vector<Cube*> cubes, Shader* shader, GLFWwindow* window);
+void DrawCube(Cube* cube, Shader* shader, GLFWwindow* window);
+void DrawCylinder(MyCylinder* cylinder, Shader* shader, GLFWwindow* window);
+void Draw(MyCylinder* cylinder, Cube* cube, Shader* shader, GLFWwindow* window);
 
 Camera* cam = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-float lastX = SCR_WIDTH / 2.0f;
-float lastY = SCR_HEIGHT / 2.0f;
+double lastX = SCR_WIDTH / 2.0f;
+double lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 
 // timing
-float deltaTime = 0.0f;	// time between current frame and last frame
-float lastFrame = 0.0f;
+double deltaTime = 0.0f;	// time between current frame and last frame
+double lastFrame = 0.0f;
+
+//GA* ga = new GA();
 
 int main()
 {
 	//System* s = new System();
 	//s->SetCallbackFunctions();
 	//s->Update();	
-	
+
 	// Initialisation of GLFW
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -67,18 +75,164 @@ int main()
 		return -1;
 	}
 
-	
-	//Model *mod = new Model("mod.obj");
-	Setup(window);
+
+
+    Shader* shader1 = new Shader("Shaders/Vertex.vert", "Shaders/Fragment.frag");
+	Shader* shader2 = new Shader("Shaders/Cylinder.vert", "Shaders/Cylinder.frag");
+	Shader* shaderMix = new Shader("Shaders/Mix.vert", "Shaders/Mix.frag");
+
+	//std::vector<Cube*> cubes;
+
+	MyCylinder* c = new MyCylinder(0.5f, 1.0f, 2.0f, 10);
+	c->LoadTexture(shader2);
+	//Cube* cube1 = new Cube(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 0.3f, 0.5f));
+	//cube1->LoadTexture(shader1);	
+
+	//std::vector<float> cVerts = c->GetVertices();
+
+	/*for (int i = 0; i < cVerts.size(); i += 3)
+	{
+		glm::vec3 newPos;
+		newPos.x = cVerts[i];
+		newPos.y = cVerts[i+1];
+		newPos.z = cVerts[i+2];
+
+		Cube* newCube = new Cube(newPos, glm::vec3(0.05f, 0.05f, 0.05f), glm::vec3(1.0f, 1.0f, 1.0f));
+		newCube->LoadTexture(shader1);
+		cubes.push_back(newCube);
+	}*/
+
+	//DrawCubes(cubes, shader1, window);
+	DrawCylinder(c, shader2, window);
+	//DrawCube(cube1, shader1, window);
+	//Setup(window);
 
 	glfwTerminate();
 	return 0;
 }
 
+void Draw(MyCylinder* cylinder, Cube* cube, Shader* shader, GLFWwindow* window)
+{
+	while (!glfwWindowShouldClose(window))
+	{
+		glClearColor(0.78f, 0.78f, 0.78f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+		double currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		ProcessInput(window);
+
+		shader->Use();
+
+		glm::mat4 projection = glm::perspective(glm::radians(cam->m_zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		shader->SetMatrix("projection", projection);
+
+		glm::mat4 view = cam->GetViewMatrix();
+		shader->SetMatrix("view", view);
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+}
+
+void DrawCubes(std::vector<Cube*> cubes, Shader* shader, GLFWwindow* window)
+{
+	while (!glfwWindowShouldClose(window))
+	{
+		glClearColor(0.78f, 0.78f, 0.78f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		double currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		ProcessInput(window);
+
+		shader->Use();
+
+		glm::mat4 projection = glm::perspective(glm::radians(cam->m_zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		shader->SetMatrix("projection", projection);
+
+		glm::mat4 view = cam->GetViewMatrix();
+		shader->SetMatrix("view", view);
+
+		for (int i = 0; i < cubes.size(); i++)
+		{
+			cubes[i]->Draw(shader);
+		}
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+}
+
+
+void DrawCube(Cube* cube, Shader* shader, GLFWwindow* window)
+{
+	while (!glfwWindowShouldClose(window))
+	{
+		glClearColor(0.78f, 0.78f, 0.78f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		double currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		ProcessInput(window);
+
+		shader->Use();
+
+		glm::mat4 projection = glm::perspective(glm::radians(cam->m_zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		shader->SetMatrix("projection", projection);
+
+		glm::mat4 view = cam->GetViewMatrix();
+		shader->SetMatrix("view", view);
+
+		cube->Draw(shader);
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+}
+
+void DrawCylinder(MyCylinder* cylinder, Shader* shader, GLFWwindow* window)
+{
+	while (!glfwWindowShouldClose(window))
+	{
+		glClearColor(0.78f, 0.78f, 0.78f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		double currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		ProcessInput(window);
+
+		shader->Use();
+
+		glm::mat4 projection = glm::perspective(glm::radians(cam->m_zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		shader->SetMatrix("projection", projection);
+
+		glm::mat4 view = cam->GetViewMatrix();
+		shader->SetMatrix("view", view);
+
+		cylinder->Update(deltaTime);
+		cylinder->Draw(shader);
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+}
+
+
+
 std::string ReadFile(const char *filePath) {
 	std::string content;
 	std::ifstream fileStream(filePath, std::ios::in);
 
+	
 	if (!fileStream.is_open()) {
 		std::cerr << "Could not read file " << filePath << ". File does not exist." << std::endl;
 		return "";
@@ -87,7 +241,7 @@ std::string ReadFile(const char *filePath) {
 	std::string line = "";
 	while (!fileStream.eof()) {
 		std::getline(fileStream, line);
-		content.append(line + "\n");
+		//content.append(line + "\n");
 	}
 
 	fileStream.close();
@@ -98,7 +252,7 @@ void Setup(GLFWwindow* window)
 {
 	glEnable(GL_DEPTH_TEST);
 
-	Shader* shader1 = new Shader("vertShad.vert", "fragShad.frag");
+	Shader* shader1 = new Shader("Vertex.vert", "Fragment.frag");
 
 	float vertices[] = {
 	   -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -198,7 +352,7 @@ void Setup(GLFWwindow* window)
 
 	while (!glfwWindowShouldClose(window))
 	{
-		float currentFrame = glfwGetTime();
+		double currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
@@ -268,8 +422,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 		firstMouse = false;
 	}
 
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+	double xoffset = xpos - lastX;
+	double yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
 	lastX = xpos;
 	lastY = ypos;

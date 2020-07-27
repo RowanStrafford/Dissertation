@@ -1,5 +1,7 @@
 #pragma once
-#include "Model.h"
+#include "Cube.h"
+#include "Shader.h"
+
 #include <vector>
 
 class GA
@@ -8,13 +10,15 @@ public:
 	GA();
 	~GA();
 
-	void SetInputModel(Model* model);
-	void GenerateInitialPopulation();
-	void DisplayPopulation();
+	void SetInputModel(Cube* model);
+	void GenerateInitialPopulation(int populationSize);
+	void DisplayPopulation(Shader* shader);
 	// Selection of population
 	void Crossover();
 	void Mutation();
 private:
-	std::vector<Model*> m_vPopulation;
+	std::vector<Cube*> m_vPopulation;
+	Cube* m_inputModel;
+	int m_populationSize;
 };
 

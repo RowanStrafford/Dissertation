@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{7D0AEC75-C179-4BDF-A693-5A7A2C53FA42}</ProjectGuid>
     <RootNamespace>Project</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -134,6 +134,8 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="Cylinder.cpp" />
+    <ClCompile Include="MyCylinder.cpp" />
     <ClCompile Include="GA.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Mesh.cpp" />
@@ -146,6 +148,8 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Cube.h" />
+    <ClInclude Include="Cylinder.h" />
+    <ClInclude Include="MyCylinder.h" />
     <ClInclude Include="GA.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OBJModel.h" />
@@ -155,8 +159,14 @@
     <ClInclude Include="System.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="fragShad.frag" />
-    <None Include="vertShad.vert" />
+    <None Include="Shaders\Cylinder.frag" />
+    <None Include="Shaders\Cylinder.vert" />
+    <None Include="Shaders\Fragment.frag" />
+    <None Include="Shaders\Mix.frag" />
+    <None Include="Shaders\Mix.vert" />
+    <None Include="Shaders\Simple.frag" />
+    <None Include="Shaders\Simple.vert" />
+    <None Include="Shaders\Vertex.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

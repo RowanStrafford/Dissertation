@@ -29,8 +29,8 @@ public:
 	glm::vec3 m_Right;
 	glm::vec3 m_WorldUp;
 
-	float m_yaw;
-	float m_pitch;
+	double m_yaw;
+	double m_pitch;
 
 	float m_movementSpeed;
 	float m_mouseSensitivity;
@@ -84,7 +84,7 @@ public:
 		}
 	}
 
-	void ProcessMouseMovement(float xOffset, float yOffset, GLboolean constrainPitch = true)
+	void ProcessMouseMovement(double xOffset, double yOffset, GLboolean constrainPitch = true)
 	{
 		xOffset *= m_mouseSensitivity;
 		yOffset *= m_mouseSensitivity;
